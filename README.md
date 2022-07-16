@@ -2,7 +2,7 @@
 
 ---
 
-##Contents
+## Contents
 - [About](#about)
 - [Usage](#usage)
 
