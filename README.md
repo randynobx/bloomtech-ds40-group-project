@@ -1,6 +1,6 @@
-# DS40 Group project
+# Board Game Project
 
-Brief summary goes here.
+Analysis and prediction models of board game data from BoardGameGeek.com
 
 ## Contents
 - [About](#about)
@@ -25,4 +25,7 @@ Below are summaries of each of our contributions.
 - stuff
 
 ### Randy Nance
-- stuff
+- bgg_api package
+    - Created bggxmlapi2.py helper functions and unit tests
+    - Created bgg_id_scraper.py script to get game ids
+    - Created bgg_game_scraper.py to scrape game data in bulk
