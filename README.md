@@ -1,6 +1,6 @@
-# DS40 Group project
+# Board Game Project
 
-Brief summary goes here.
+Analysis and prediction models of board game data from BoardGameGeek.com
 
 ## Contents
 - [About](#about)
