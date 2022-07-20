@@ -1,7 +1,7 @@
 '''Tests for BoardGameGeek XMLAPI2 helper functions'''
 
 from bs4 import BeautifulSoup
-from src.bgg_api import bggxmlapi2 as api
+import bggxmlapi2 as api
 
 
 def test_build_query():
