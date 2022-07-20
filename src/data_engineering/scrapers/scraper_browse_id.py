@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 
 # Path to data directory
 DATA_PATH = 'data'
+# Number of pages to scrape (100 games per page)
+NUM_OF_PAGES = 10
 
 def save_browse_page(content: str, page: int) -> None:
     '''Save browse page to file
@@ -43,7 +45,6 @@ def extract_ids(res: requests) -> list:
     return list(set(re.findall(search_pattern, str(res.content))))
 
 if __name__ == '__main__':
-    NUM_OF_PAGES = 10
     id_list = []
     print(f'Fetching first {NUM_OF_PAGES} pages ({NUM_OF_PAGES * 100} total games)')
     # Fetch, save, and extract each page
@@ -54,8 +55,8 @@ if __name__ == '__main__':
         id_list.extend(extract_ids(page))
     
     # Save ids to file
-    filepath = f'{DATA_PATH}/processed/Top_{NUM_OF_PAGES * 100}_game_ids.txt'
+    filepath = f'{DATA_PATH}/processed/Top_{NUM_OF_PAGES * 100}_game_ids.csv'
     with open(filepath, 'x') as file:
         for id in id_list:
-            file.write(f'{str(id)}\n')
-    print(f'Game IDs successfully extracted. Saved to {filepath[3:]}')
+            file.write(f'{str(id)},')
+    print(f'Game IDs successfully extracted. Saved to {filepath}')

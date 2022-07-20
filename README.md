@@ -16,7 +16,7 @@ Analysis and prediction models of board game data from BoardGameGeek.com
 ## Contributers
 
 This project is a collaboration between three members of the DS40 cohort in the Data Science program at Bloomtech.
-Below are summaries of each of our contributions.
+Below is a brief summary of each of our contributions. For more detail, please see [CONTRIBUTIONS.md](CONTRIBUTIONS.md).
 
 ### Chris Burrows
 - stuff
@@ -25,7 +25,7 @@ Below are summaries of each of our contributions.
 - stuff
 
 ### Randy Nance
-- bgg_api package
-    - Created bggxmlapi2.py helper functions and unit tests
-    - Created bgg_id_scraper.py script to get game ids
-    - Created bgg_game_scraper.py to scrape game data in bulk
+- Data Engineering
+    - Wrote bggxmlapi2.py and scraper_* modules
+    - Designed db schema
+    - Wrote ingestion module
