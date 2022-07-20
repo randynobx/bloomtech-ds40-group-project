@@ -1,6 +1,6 @@
-# DS40 Group project
+# Board Game Project
 
-Brief summary goes here.
+Analysis and prediction models of board game data from BoardGameGeek.com
 
 ## Contents
 - [About](#about)
@@ -16,7 +16,7 @@ Brief summary goes here.
 ## Contributers
 
 This project is a collaboration between three members of the DS40 cohort in the Data Science program at Bloomtech.
-Below are summaries of each of our contributions.
+Below is a brief summary of each of our contributions. For more detail, please see [CONTRIBUTIONS.md](CONTRIBUTIONS.md).
 
 ### Chris Burrows
 - stuff
@@ -25,4 +25,7 @@ Below are summaries of each of our contributions.
 - stuff
 
 ### Randy Nance
-- stuff
+- Data Engineering
+    - Wrote bggxmlapi2.py and scraper_* modules
+    - Designed db schema
+    - Wrote ingestion module

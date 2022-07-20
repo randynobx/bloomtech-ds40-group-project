@@ -4,8 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pandas = "*"
+sqlalchemy = "*"
 
 [dev-packages]
+requests = "*"
+bs4 = "*"
+ipykernel = "*"
+lxml = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.9"
