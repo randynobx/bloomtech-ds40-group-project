@@ -3,6 +3,6 @@ DIALECT: 'sqlite'
 DRIVER: 'pysqlite'
 USER: ''
 PASS: ''
-HOST: 127.0.0.1
-PORT: 111
-DB: 'test_db.sqlite3'
+HOST: localhost
+PORT: 5432
+DB: 'boardgames.sqlite3'
