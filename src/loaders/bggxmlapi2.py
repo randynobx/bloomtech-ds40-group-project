@@ -16,8 +16,8 @@ def build_query(query_type: str, params: dict) -> str:
     '''
     url = f'https://boardgamegeek.com/xmlapi2/{query_type}?'
     for key, value in params.items():
-        url += f'&{key}={str(value)}'
-    return url
+        url += f'{key}={str(value)}&'
+    return url.strip('&')
 
 
 def fetch_game(game_id: int) -> requests:
