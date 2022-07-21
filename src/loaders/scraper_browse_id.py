@@ -1,13 +1,11 @@
-'''Scrape Top N games from BGG'''
+'''Scrape top N games from BGG
+
+N = config.NUM_OF_PAGES * 100
+'''
 
 import re
 import requests
-from bs4 import BeautifulSoup
-
-# Path to data directory
-DATA_PATH = 'data'
-# Number of pages to scrape (100 games per page)
-NUM_OF_PAGES = 10
+from . import config
 
 def save_browse_page(content: str, page: int) -> None:
     '''Save browse page to file
@@ -16,9 +14,13 @@ def save_browse_page(content: str, page: int) -> None:
         content (str): html of page to save
         page (int): page number to identify file with
     '''
-    filename = f'{DATA_PATH}/raw/bgg_browse_pages/bgg_browse_page_{str(page)}.html'
-    with open(filename, 'xb') as file:
-        file.write(content)
+    filename = f'{config.DATA_PATH}/raw/bgg_browse_page_{str(page)}.html'
+    try:
+        with open(filename, 'xb') as file:
+            file.write(content)
+    except FileExistsError:
+        with open(filename, 'wb') as file:
+            file.write(content)
 
 def fetch_browse_page(page: int) -> requests:
     '''Fetch specified Browse page
@@ -44,19 +46,25 @@ def extract_ids(res: requests) -> list:
     # Change to set to remove duplicates
     return list(set(re.findall(search_pattern, str(res.content))))
 
-if __name__ == '__main__':
+def run():
+    '''Run scraper'''
     id_list = []
-    print(f'Fetching first {NUM_OF_PAGES} pages ({NUM_OF_PAGES * 100} total games)')
+    print(f'Fetching first {config.NUM_OF_PAGES} pages ({config.NUM_OF_PAGES * 100} total games)')
     # Fetch, save, and extract each page
-    for pagenum in range(1, NUM_OF_PAGES + 1):
+    for pagenum in range(config.NUM_OF_PAGES):
         print(pagenum, end=' ')
         page = fetch_browse_page(pagenum)
         save_browse_page(page.content, pagenum)
         id_list.extend(extract_ids(page))
+    print('Done')
     
     # Save ids to file
-    filepath = f'{DATA_PATH}/processed/Top_{NUM_OF_PAGES * 100}_game_ids.csv'
-    with open(filepath, 'x') as file:
-        for id in id_list:
-            file.write(f'{str(id)},')
-    print(f'Game IDs successfully extracted. Saved to {filepath}')
+    filepath = f'{config.DATA_PATH}/processed/game_ids.csv'
+    print(f'Saving game ids to {filepath}...', end='')
+    try:
+        with open(filepath, 'x') as file:
+            file.write('\n'.join(list(set(id_list))))
+    except FileExistsError:
+        with open(filepath, 'w') as file:
+            file.write('\n'.join(list(set(id_list))))
+    print('Done')
