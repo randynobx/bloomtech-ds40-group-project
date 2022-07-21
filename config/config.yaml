@@ -1,0 +1,5 @@
+DATA_PATH: 'data'
+
+SCRAPING:
+  NUM_OF_PAGES: 10 # 100 games per page
+  BATCH_SIZE: 1000

@@ -26,6 +26,5 @@ Below is a brief summary of each of our contributions. For more detail, please s
 
 ### Randy Nance
 - Data Engineering
-    - Wrote bggxmlapi2.py and scraper_* modules
-    - Designed db schema
-    - Wrote ingestion module
+    - Wrote loaders package
+    - Designed database schema
