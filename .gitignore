@@ -3,3 +3,5 @@
 __pycache__
 .DS_Store
 data
+*.sqlite3
+etl_scratch.ipynb

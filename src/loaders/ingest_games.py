@@ -1,7 +1,7 @@
 '''ETL Pipeline for game batch XML -> Database'''
 
+from sqlalchemy.orm import Session
 from bs4 import BeautifulSoup
-from sqlalchemy import MetaData
 from .database_helpers import connect_to_db
 from .boardgame_db_classes import Game, GameCategoryMap, GameMechanicMap
 from . import config
@@ -17,19 +17,19 @@ def ingest_game(game: BeautifulSoup) -> Game:
         Game object
     '''
     return Game(
-        id = game.attrs['id'],
+        id = int(game.attrs['id']),
         title = game.find('name').attrs['value'],
-        release_year = game.yearpublished.attrs['value'],
-        avg_rating = game.find('average').attrs['value'],
-        bayes_rating = game.find('bayesaverage').attrs['value'],
-        total_ratings = game.find('usersrated').attrs['value'],
-        std_rating = game.find('stddev').attrs['value'],
-        min_players = game.minplayers.attrs['value'],
-        max_players = game.maxplayers.attrs['value'],
-        min_playtime = game.minplaytime.attrs['value'],
-        max_playtime = game.maxplaytime.attrs['value'],
-        weight = game.find('averageweight').attrs['value'],
-        owned_copies = game.find('owned').attrs['value']
+        release_year = int(game.yearpublished.attrs['value']),
+        avg_rating = float(game.find('average').attrs['value']),
+        bayes_rating = float(game.find('bayesaverage').attrs['value']),
+        total_ratings = int(game.find('usersrated').attrs['value']),
+        std_rating = float(game.find('stddev').attrs['value']),
+        min_players = int(game.minplayers.attrs['value']),
+        max_players = int(game.maxplayers.attrs['value']),
+        min_playtime = int(game.minplaytime.attrs['value']),
+        max_playtime = int(game.maxplaytime.attrs['value']),
+        weight = float(game.find('averageweight').attrs['value']),
+        owned_copies = int(game.find('owned').attrs['value'])
     )
 
 
@@ -67,6 +67,32 @@ def ingest_game_cat_mapping(game: BeautifulSoup) -> list:
                   for cat_id in category_ids]
 
 
+def upsert_game(session: Session, game: Game):
+    '''Insert or update Game object to database'''
+     # Check if game exists, insert on absense
+    existing = session.query(Game).filter_by(id=game.id).scalar()
+    if not existing:
+        session.add(game)
+    elif existing.id == game.id:
+        pass # <IMPLEMENT UPDATE>
+
+
+def insert_mech_map(session: Session, mech_map: GameMechanicMap):
+    '''Insert GameMechanicMap to database if not already existing'''
+    mech_map_exists = session.query(GameMechanicMap)\
+        .filter_by(game_id=mech_map.game_id,
+                    mechanic_id=mech_map.mechanic_id)
+    if not mech_map_exists.first():
+        session.add(mech_map)
+
+def insert_cat_map(session: Session, cat_map: GameCategoryMap):
+    '''Insert GameCategoryMap to database if not already existing'''
+    cat_map_exists = session.query(GameCategoryMap)\
+                        .filter_by(game_id=cat_map.game_id,
+                                   category_id=cat_map.category_id)
+    if not cat_map_exists.first():
+        session.add(cat_map)
+
 def run():
     '''Run ingestion script'''
     with connect_to_db() as session:
@@ -85,9 +111,15 @@ def run():
 
             # Iterate through games to extract data and add to database
             for game in batch_list:
-                # Extract and transform data
-                session.add(ingest_game(game))
-                session.add_all(ingest_game_mech_mapping(game))
-                session.add_all(ingest_game_cat_mapping(game))
+                # Game data
+                upsert_game(session, ingest_game(game))
+                # GameMechanicMaps
+                mech_maps = ingest_game_mech_mapping(game)
+                for mech_map in mech_maps:
+                    insert_mech_map(session, mech_map)
+                # GameCategoryMaps
+                cat_maps = ingest_game_cat_mapping(game)
+                for cat_map in cat_maps:
+                    insert_cat_map(session, cat_map)
                 session.commit()
             print('Done')    

@@ -19,8 +19,8 @@ try:
     with open('config/db_config.yaml', 'r') as file:
         config = safe_load(file)
 except FileNotFoundError:
-    print('No db config found.')
-    DB_URL = input('DB URL String: ')
+    print('No db config found. Defaulting to boardgames.sqlite3')
+    DB_URL = 'sqlite+pysqlite:///boardgames.sqlite3'
 else:
     dialect = config['DIALECT']
     driver = config['DRIVER']

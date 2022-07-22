@@ -1,7 +1,6 @@
 '''ETL Pipeline for Classification CSVs -> Database'''
 
 import pandas as pd
-from yaml import safe_load
 from .database_helpers import get_engine
 from . import config
 
