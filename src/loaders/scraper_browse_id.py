@@ -62,7 +62,7 @@ def run():
         save_browse_page(page.content, pagenum)
         id_list.extend(extract_ids(page))
     print('Done')
-    
+   
     # Save ids to file
     filepath = f'{config.DATA_PATH}/processed/game_ids.csv'
     pathname = f'{config.DATA_PATH}/processed/'
