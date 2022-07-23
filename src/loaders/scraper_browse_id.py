@@ -5,6 +5,7 @@ N = config.NUM_OF_PAGES * 100
 
 import re
 import requests
+import os
 from . import config
 
 def save_browse_page(content: str, page: int) -> None:
@@ -15,10 +16,14 @@ def save_browse_page(content: str, page: int) -> None:
         page (int): page number to identify file with
     '''
     filename = f'{config.DATA_PATH}/raw/bgg_browse_page_{str(page)}.html'
+    pathname = f'{config.DATA_PATH}/raw/'
     try:
         with open(filename, 'xb') as file:
             file.write(content)
-    except FileExistsError:
+    except (FileExistsError, FileNotFoundError):
+        # Create folder if raw folder doesn't exist
+        if not os.path.exists(pathname):
+            os.makedirs(pathname)
         with open(filename, 'wb') as file:
             file.write(content)
 
@@ -60,11 +65,15 @@ def run():
     
     # Save ids to file
     filepath = f'{config.DATA_PATH}/processed/game_ids.csv'
+    pathname = f'{config.DATA_PATH}/processed/'
     print(f'Saving game ids to {filepath}...', end='')
     try:
         with open(filepath, 'x') as file:
             file.write('\n'.join(list(set(id_list))))
-    except FileExistsError:
+    except (FileExistsError, FileNotFoundError):
+        # Create folder if processed folder doesn't exist
+        if not os.path.exists(pathname):
+            os.makedirs(pathname)
         with open(filepath, 'w') as file:
             file.write('\n'.join(list(set(id_list))))
     print('Done')

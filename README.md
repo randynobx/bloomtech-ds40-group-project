@@ -16,6 +16,10 @@ analysis and predictive modeling purposes.
 
 ## Usage
 
+### Setup pipenv enviroment for scraping
+Run `pipenv install --dev` to install all requrired packages
+
+Then run `pipenv shell`
 ### Setup database
 Update `config/db_config.yaml` to connect to a database of your choosing, or stick with the default for sqlite3.
 
