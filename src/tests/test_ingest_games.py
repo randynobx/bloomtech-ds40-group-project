@@ -7,7 +7,7 @@ from loaders import ingest_games
 def test_ingest_game():
     test_ret = ingest_games.ingest_game(game_soup)
     assert isinstance(test_ret, Game), 'Did not return Game object'
-    assert test_ret.id == '72125', 'Incorrect ID returned'
+    assert test_ret.id == 72125, 'Incorrect ID returned'
     assert test_ret.title == 'Eclipse', 'Incorrect Title returned'
 
 
