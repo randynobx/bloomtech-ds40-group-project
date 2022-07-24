@@ -12,14 +12,10 @@ def save_file(path: str, filename: str, content: str) -> None:
         content (str): html of page to save
     '''
     filepath = f'{path}/{filename}'
-    try:
-        with open(filepath, 'wb') as file:
-            file.write(content)
-    except FileExistsError:
-        if not os.path.exists(path):
-            os.makedirs(path)
-        with open(filepath, 'xb') as file:
-            file.write(content)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(filepath, 'wb') as file:
+        file.write(content)
 
 
 def fetch_page(url: str) -> requests.Response:
