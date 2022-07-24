@@ -1,12 +1,15 @@
 '''Create board games database'''
 
-from sqlalchemy import MetaData, create_engine, Table, Column, Integer, Float, String, ForeignKey, Date
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+import os
+from sqlalchemy import MetaData, Table, Column, Integer, Float, String, ForeignKey
 from .database_helpers import get_engine
 
-def run():
+def run(config):
     '''Create database tables'''
+    # Ensure /data/final/ directory exists
+    if 'sqlite' in config.DB_URL and not os.path.exists('data/final'):
+        os.mkdir('data/final')
+
     engine = get_engine()
     meta = MetaData()
 
