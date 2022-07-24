@@ -1,24 +1,28 @@
 '''Helper fucntions for database'''
 
-import urllib
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from . import config
 
-def get_engine():
+def get_engine(url: str):
     '''Generate a SQL Alchemy engine
+
+    Args:
+        url (str): database connection string
 
     Returns:
         SQL Alchemy engine
     '''
-    return create_engine(config.DB_URL)
+    return create_engine(url)
 
-def connect_to_db():
+def connect_to_db(url: str):
     '''Generate a SQL Alchemy session
+
+    Args:
+        url (str): database connection string
 
     Returns:
         SQL Alchemy session
     '''
-    engine = get_engine()
+    engine = get_engine(url)
     Session = sessionmaker(bind=engine)
     return Session()

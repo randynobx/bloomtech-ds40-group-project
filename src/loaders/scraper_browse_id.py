@@ -6,7 +6,6 @@ N = config.NUM_OF_PAGES * 100
 import re
 from requests import Response
 from .scraper_helpers import save_file, fetch_page
-from . import config
 
 def extract_ids(res: Response) -> list:
     '''Extract game id's from browse page
@@ -21,7 +20,7 @@ def extract_ids(res: Response) -> list:
     # Change to set to remove duplicates
     return list(set(re.findall(search_pattern, str(res.content))))
 
-def run():
+def run(config):
     '''Run scraper'''
     print(f'Fetching first {config.NUM_OF_PAGES} pages ({config.NUM_OF_PAGES * 100} total games)')
 

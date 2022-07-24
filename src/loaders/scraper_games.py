@@ -5,7 +5,6 @@ Takes bgg game ids and generates batched xml files
 
 from math import ceil
 from requests import Response
-from . import config
 from .bggxmlapi2 import fetch_game
 from .scraper_helpers import save_file
 
@@ -23,7 +22,7 @@ def scrape_game_pages(game_ids_list: list, batch_size: int) -> Response:
         id_batch = ','.join(game_ids_list[begin:end])
         yield fetch_game(id_batch)
 
-def run():
+def run(config):
     '''Run scraper'''
     game_ids_file = f'{config.PROC_PATH}/{config.GAME_IDS_FILENAME}.csv'
     
