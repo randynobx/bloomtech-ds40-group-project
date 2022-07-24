@@ -10,7 +10,7 @@ def run(config):
     if 'sqlite' in config.DB_URL and not os.path.exists('data/final'):
         os.mkdir('data/final')
 
-    engine = get_engine()
+    engine = get_engine(config.DB_URL)
     meta = MetaData()
 
     game = Table('game', meta,
