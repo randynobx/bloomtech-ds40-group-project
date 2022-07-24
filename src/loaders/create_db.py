@@ -1,13 +1,11 @@
 '''Create board games database'''
 
-from sqlalchemy import MetaData, create_engine, Table, Column, Integer, Float, String, ForeignKey, Date
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy import MetaData, Table, Column, Integer, Float, String, ForeignKey
 from .database_helpers import get_engine
 
-def run():
+def run(config):
     '''Create database tables'''
-    engine = get_engine()
+    engine = get_engine(config.DB_URL)
     meta = MetaData()
 
     game = Table('game', meta,

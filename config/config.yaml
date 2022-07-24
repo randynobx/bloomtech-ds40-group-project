@@ -13,3 +13,7 @@ SCRAPING:
   GAME_IDS_FILENAME: 'bgg_game_ids'
   BROWSE_FILENAME: 'bgg_browse_page'
   BATCH_FILENAME: 'bgg_games_batch'
+
+CLASSIFICATIONS:
+  - 'category'
+  - 'mechanic'

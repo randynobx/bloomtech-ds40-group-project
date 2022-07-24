@@ -5,14 +5,7 @@ Pulls classification index pages from BGG website and saves raw and processed co
 
 import re
 from pandas import DataFrame
-from . import config
 from .scraper_helpers import save_file, fetch_page
-
-classifications = {
-    'category': 'https://boardgamegeek.com/browse/boardgamecategory',
-    'mechanic': 'https://boardgamegeek.com/browse/boardgamemechanic'
-}
-
 
 def extract_data(res: str, label: str) -> DataFrame:
     '''Extract data from html
@@ -29,11 +22,11 @@ def extract_data(res: str, label: str) -> DataFrame:
     return DataFrame(re.findall(search_pattern, str(res.content)),
               columns=['ID', 'Name'])
 
-def run():
+def run(config):
     '''Run scraper'''
-    for label, url in classifications.items():
-        # Fetch page
-        page = fetch_page(url)
+    for label in config.CLASSIFICATIONS:
+        # Fetch browse page for type of classification
+        page = fetch_page(f'https://boardgamegeek.com/browse/boardgame{label}')
         
         # Save raw data as html
         raw_filename = f'bgg_{label}.html'

@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from bs4 import BeautifulSoup
 from .database_helpers import connect_to_db
 from .boardgame_db_classes import Game, GameCategoryMap, GameMechanicMap
-from . import config
 
 
 def ingest_game(game: BeautifulSoup) -> Game:
@@ -93,9 +92,9 @@ def insert_cat_map(session: Session, cat_map: GameCategoryMap):
     if not cat_map_exists.first():
         session.add(cat_map)
 
-def run():
+def run(config):
     '''Run ingestion script'''
-    with connect_to_db() as session:
+    with connect_to_db(config.DB_URL) as session:
         # Run process for each batch
         total_batches = int(config.NUM_OF_PAGES * 100 / config.BATCH_SIZE)
         for batch_num in range(total_batches):
