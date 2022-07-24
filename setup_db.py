@@ -17,5 +17,6 @@ print('Done')
 
 # Run ingestion modules
 print('Transforming and loading data to database...')
+ingest_classifications.run()
 ingest_games.run()
 print('ETL Done')
