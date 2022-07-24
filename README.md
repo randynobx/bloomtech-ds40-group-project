@@ -1,5 +1,7 @@
 # Board Game Project
 
+![Pytest](https://github.com/randynobx/boardgamegeek_loader/actions/workflows/python-app.yml/badge.svg?event=push)
+
 ETL pipeline, analysis and prediction models of board game data from BoardGameGeek.com
 
 ## Contents

@@ -12,15 +12,10 @@ def save_file(path: str, filename: str, content: bytearray) -> None:
         content (bytearray): raw object or encoded str to write to file
     '''
     filepath = f'{path}/{filename}'
-    try:
-        with open(filepath, 'wb') as file:
-            file.write(content)
-    except FileNotFoundError:
-        if not os.path.exists(path):
-            os.makedirs(path)
-        with open(filepath, 'xb') as file:
-            file.write(content)
-
+    if not os.path.exists(path):
+        os.makedirs(path)
+    with open(filepath, 'wb') as file:
+        file.write(content)
 
 def fetch_page(url: str) -> requests.Response:
     '''Fetch specified html page
