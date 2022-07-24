@@ -36,7 +36,8 @@ def run(config):
     
     # Scrape game data in batches
     print('Fetching game data...', end='')
-    for id, page in enumerate(scrape_game_pages(game_ids_list, config.BATCH_SIZE)):
+    for id, page in enumerate(scrape_game_pages(game_ids_list,
+                                                config.BATCH_SIZE)):
         batch_filename = f'bgg_games_batch_{str(id)}.xml'
         save_file(config.RAW_PATH, batch_filename, page.content)
     print('Done')
