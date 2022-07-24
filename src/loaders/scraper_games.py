@@ -4,25 +4,12 @@ Takes bgg game ids and generates batched xml files
 '''
 
 from math import ceil
-from . import bggxmlapi2 as api
+from requests import Response
 from . import config
+from .bggxmlapi2 import fetch_game
+from .scraper_helpers import save_file
 
-def save_game_batch(content: str, id: int) -> None:
-    '''Save game page to file
-
-    Args:
-        content (str): html of page to save
-        id (int): id to identify file with
-    '''
-    filename = f'{config.DATA_PATH}/raw/bgg_games_batch_{str(id)}.xml'
-    try:
-        with open(filename, 'xb') as file:
-            file.write(content)
-    except FileExistsError:
-        with open(filename, 'wb') as file:
-            file.write(content)
-
-def scrape_game_pages(game_ids_list: list, batch_size: int) -> None:
+def scrape_game_pages(game_ids_list: list, batch_size: int) -> Response:
     '''Fetch, save, and extract data from game pages
 
     Args:
@@ -34,12 +21,12 @@ def scrape_game_pages(game_ids_list: list, batch_size: int) -> None:
         begin = batch_num * batch_size
         end = min(begin + batch_size, len(game_ids_list))
         id_batch = ','.join(game_ids_list[begin:end])
-        batch_res = api.fetch_game(id_batch)
-        save_game_batch(batch_res.content, batch_num)
+        yield fetch_game(id_batch)
 
 def run():
     '''Run scraper'''
-    game_ids_file = f'{config.DATA_PATH}/processed/game_ids.csv'
+    game_ids_file = f'{config.PROC_PATH}/{config.GAME_IDS_FILENAME}.csv'
+    batch_filename = f'{config.BATCH_FILENAME}_{str(id)}.xml'
     
     print(f'Using ids from {game_ids_file}\nBatch size: {config.BATCH_SIZE}')
     
@@ -49,6 +36,9 @@ def run():
         game_ids_list = file.read().split('\n')
     print('Done')
     
+    # Scrape game data in batches
     print('Fetching game data...', end='')
-    scrape_game_pages(game_ids_list, config.BATCH_SIZE)
+    for page in scrape_game_pages(game_ids_list, config.BATCH_SIZE):
+        batch_filename = f'bgg_games_batch_{str(id)}.xml'
+        save_file(config.RAW_PATH, batch_filename, page.content)
     print('Done')

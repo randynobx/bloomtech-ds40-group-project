@@ -4,42 +4,11 @@ N = config.NUM_OF_PAGES * 100
 '''
 
 import re
-import requests
-import os
+from requests import Response
+from .scraper_helpers import save_file, fetch_page
 from . import config
 
-def save_browse_page(content: str, page: int) -> None:
-    '''Save browse page to file
-
-    Args:
-        content (str): html of page to save
-        page (int): page number to identify file with
-    '''
-    pathname = f'{config.DATA_PATH}/raw'
-    filename = f'{pathname}/bgg_browse_page_{str(page)}.html'
-    # Create folder if raw folder doesn't exist
-    if not os.path.exists(pathname):
-        os.makedirs(pathname)
-    try:
-        with open(filename, 'xb') as file:
-            file.write(content)
-    except FileExistsError:
-        with open(filename, 'wb') as file:
-            file.write(content)
-
-
-def fetch_browse_page(page: int) -> requests:
-    '''Fetch specified Browse page
-
-    Args:
-        page (int): Page number to grab from BGG
-
-    Returns:
-        (requests)'''
-    url = f'https://boardgamegeek.com/browse/boardgame/page/{str(page)}'
-    return requests.get(url)
-
-def extract_ids(res: requests) -> list:
+def extract_ids(res: Response) -> list:
     '''Extract game id's from browse page
 
     Args:
@@ -54,28 +23,26 @@ def extract_ids(res: requests) -> list:
 
 def run():
     '''Run scraper'''
-    id_list = []
     print(f'Fetching first {config.NUM_OF_PAGES} pages ({config.NUM_OF_PAGES * 100} total games)')
+
     # Fetch, save, and extract each page
+    id_list = [] # Running list
     for pagenum in range(config.NUM_OF_PAGES):
         print(pagenum, end=' ')
-        page = fetch_browse_page(pagenum)
-        save_browse_page(page.content, pagenum)
+
+        # Set page variables
+        filename = f'{config.BROWSE_FILENAME}_{str(pagenum)}.html'
+        page_url = f'https://boardgamegeek.com/browse/boardgame/page/{str(pagenum)}'
+
+        # Scrape page
+        page = fetch_page(page_url)
+        save_file(config.RAW_PATH, filename, page.content)
         id_list.extend(extract_ids(page))
     print('Done')
 
-    # Save ids to file
-    pathname = f'{config.DATA_PATH}/processed'
-    filepath = f'{pathname}/game_ids.csv'
-
-    print(f'Saving game ids to {filepath}...', end='')
-    # Create folder if processed folder doesn't exist
-    if not os.path.exists(pathname):
-        os.makedirs(pathname)
-    try:
-        with open(filepath, 'x') as file:
-            file.write('\n'.join(list(set(id_list))))
-    except FileExistsError:
-        with open(filepath, 'w') as file:
-            file.write('\n'.join(list(set(id_list))))
+    # Save ids to csv file
+    contents = '\n'.join(list(set(id_list)))
+    csv_filename = f'{config.GAME_IDS_FILENAME}.csv'
+    print(f'Saving game ids to {config.PROC_PATH}/{csv_filename}...', end='')
+    save_file(config.PROC_PATH, csv_filename, contents.encode())
     print('Done')

@@ -5,4 +5,4 @@ USER: ''
 PASS: ''
 HOST: localhost
 PORT: 5432
-DB: 'data/final/boardgames.sqlite3'
+DB: 'data/final/boardgames.sqlite3' # specify filepath if using sqlite3

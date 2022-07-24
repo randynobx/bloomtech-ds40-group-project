@@ -4,9 +4,9 @@ Pulls classification index pages from BGG website and saves raw and processed co
 '''
 
 import re
-import requests
 from pandas import DataFrame
 from . import config
+from .scraper_helpers import save_file, fetch_page
 
 classifications = {
     'category': 'https://boardgamegeek.com/browse/boardgamecategory',
@@ -33,17 +33,12 @@ def run():
     '''Run scraper'''
     for label, url in classifications.items():
         # Fetch page
-        page = requests.get(url)
+        page = fetch_page(url)
         
         # Save raw data as html
-        raw_file = f'{config.DATA_PATH}/raw/bgg_{label}.html'
-        print(f'Saving {raw_file}...', end='')
-        try:
-            with open(raw_file, 'xb') as file:
-                file.write(page.content)
-        except FileExistsError:
-            with open(raw_file, 'wb') as file:
-                file.write(page.content)    
+        raw_filename = f'bgg_{label}.html'
+        print(f'Saving {config.RAW_PATH}/{raw_filename}...', end='')
+        save_file(config.RAW_PATH, raw_filename, page.content) 
         print('Done')
 
         # Extract and Transform data
@@ -52,9 +47,9 @@ def run():
         print('Done')
         
         # Save to csv
-        proc_file = f'{config.DATA_PATH}/processed/bgg_{label}.csv'
-        print(f'Saving {proc_file}...', end='')
-        extracted_data.to_csv(proc_file, index=False)
+        proc_filename = f'{config.PROC_PATH}/bgg_{label}.csv'
+        print(f'Saving {proc_filename}...', end='')
+        extracted_data.to_csv(proc_filename, index=False)
         print('Done')
         
-        print(f'{label} classifications successfully extracted and saved to {proc_file}')
+        print(f'{label} classifications successfully extracted and saved to {proc_filename}')

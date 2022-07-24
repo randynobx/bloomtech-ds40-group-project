@@ -1,20 +1,21 @@
 """Create and load boardgame database"""
-import src.loaders as loaders
+from src.loaders import scraper_browse_id, scraper_classifications, create_db,\
+                        scraper_games, ingest_classifications, ingest_games
+
 
 # Run scraping modules
 print('Scraping BGG...')
-loaders.scraper_browse_id.run()
-loaders.scraper_classifications.run()
-loaders.scraper_games.run()
+scraper_browse_id.run()
+scraper_classifications.run()
+scraper_games.run()
 print('Scraping Done')
 
 # Create database
 print('Initializing Database...', end='')
-loaders.create_db.run()
+create_db.run()
 print('Done')
 
 # Run ingestion modules
 print('Transforming and loading data to database...')
-loaders.ingest_classifications.run()
-loaders.ingest_games.run()
+ingest_games.run()
 print('ETL Done')
