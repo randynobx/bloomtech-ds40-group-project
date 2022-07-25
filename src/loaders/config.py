@@ -30,5 +30,7 @@ class Config:
         database = config['DB']
         if dialect == 'sqlite':
             self.DB_URL = f'{dialect}+{driver}:///{database}'
+            self.DB_NAME = database
+            self.DB_PATH = self.FINAL_PATH
         else:
             self.DB_URL = f'{dialect}+{driver}://{username}:{password}@{host}:{port}/{database}'
