@@ -21,6 +21,7 @@ class Config:
         # Database config
         with open(f'{path}/db_config.yaml', 'r') as file:
             config = safe_load(file)
+<<<<<<< HEAD
         dialect = config['DIALECT']
         driver = config['DRIVER']
         username = config['USER']
@@ -32,5 +33,16 @@ class Config:
             self.DB_URL = f'{dialect}+{driver}:///{database}'
             self.DB_NAME = database
             self.DB_PATH = self.FINAL_PATH
+=======
+        self.dialect = config['DIALECT']
+        self.driver = config['DRIVER']
+        self.username = config['USER']
+        self.password = config['PASS']
+        self.host = config['HOST']
+        self.port = config['PORT']
+        self.database = config['DB']
+        if self.dialect == 'sqlite':
+            self.DB_URL = f'{self.dialect}+{self.driver}:///{self.database}'
+>>>>>>> 3ae5174 (Fix config.py to get parameters from config-db.yaml)
         else:
-            self.DB_URL = f'{dialect}+{driver}://{username}:{password}@{host}:{port}/{database}'
+            self.DB_URL = f'{self.dialect}+{self.driver}://{self.username}:{self.password}@{self.host}:{self.port}/{self.database}'
