@@ -102,8 +102,12 @@ def run(config):
             filepath = f'{config.DATA_PATH}/raw/bgg_games_batch_{batch_num}.xml'
             
             # Open batch file
-            with open(filepath, 'rb') as file:
-                batch = BeautifulSoup(file, features='xml')
+            try:
+                with open(filepath, 'rb') as file:
+                    batch = BeautifulSoup(file, features='xml')
+            except FileNotFoundError:
+                print('\nFewer batches found than expected. Continuing...')
+                break
 
             # Create list of individual game items
             batch_list = [item for item in batch.items.children if item != '\n']

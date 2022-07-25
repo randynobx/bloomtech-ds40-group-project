@@ -6,8 +6,8 @@ DATA:
   FINAL: 'final'
 
 SCRAPING:
-  NUM_OF_PAGES: 30 # 100 games per page # 1379 pages total
-  BATCH_SIZE: 1000 # Recommended < 1200
+  NUM_OF_PAGES: 21 # 100 games per page # 1379 pages total
+  BATCH_SIZE: 1200 # Recommended < 1200
 
   # Filenames for scraper to use, no file extensions
   GAME_IDS_FILENAME: 'bgg_game_ids'
