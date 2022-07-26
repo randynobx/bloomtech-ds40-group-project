@@ -1,99 +1,104 @@
 '''ETL Pipeline for game batch XML -> Database'''
 
+from sqlalchemy import update
 from sqlalchemy.orm import Session
 from bs4 import BeautifulSoup
 from .database_helpers import connect_to_db
-from .boardgame_db_classes import Game, GameCategoryMap, GameMechanicMap
+from .models import Game, Category, Mechanic
 
 
-def ingest_game(game: BeautifulSoup) -> Game:
-    '''Ingest individual game data
+def ingest_game(session: Session, game_soup: BeautifulSoup) -> Game:
+    '''Ingest and upsert individual game data
 
     Args:
+        session (Session)
         game (BeautifulSoup): <item> node from xml file
 
     Returns:
         Game object
     '''
-    return Game(
-        id = int(game.attrs['id']),
-        title = game.find('name').attrs['value'],
-        release_year = int(game.yearpublished.attrs['value']),
-        avg_rating = float(game.find('average').attrs['value']),
-        bayes_rating = float(game.find('bayesaverage').attrs['value']),
-        total_ratings = int(game.find('usersrated').attrs['value']),
-        std_rating = float(game.find('stddev').attrs['value']),
-        min_players = int(game.minplayers.attrs['value']),
-        max_players = int(game.maxplayers.attrs['value']),
-        min_playtime = int(game.minplaytime.attrs['value']),
-        max_playtime = int(game.maxplaytime.attrs['value']),
-        weight = float(game.find('averageweight').attrs['value']),
-        owned_copies = int(game.find('owned').attrs['value'])
-    )
+    game = {
+        'id': int(game_soup.attrs['id']),
+        'title': game_soup.find('name').attrs['value'],
+        'release_year': int(game_soup.yearpublished.attrs['value']),
+        'avg_rating': float(game_soup.find('average').attrs['value']),
+        'bayes_rating': float(game_soup.find('bayesaverage').attrs['value']),
+        'total_ratings': int(game_soup.find('usersrated').attrs['value']),
+        'std_rating': float(game_soup.find('stddev').attrs['value']),
+        'min_players': int(game_soup.minplayers.attrs['value']),
+        'max_players': int(game_soup.maxplayers.attrs['value']),
+        'min_playtime': int(game_soup.minplaytime.attrs['value']),
+        'max_playtime': int(game_soup.maxplaytime.attrs['value']),
+        'weight': float(game_soup.find('averageweight').attrs['value']),
+        'owned_copies': int(game_soup.find('owned').attrs['value']),
+        'mechanics': ingest_game_mechanics(session, game_soup),
+        'categories': ingest_game_categories(session, game_soup)
+    }
+    
+    existing = session.get(Game, game['id'])
+    if not existing:
+        # Add new game
+        session.add(Game(**game))
+    elif existing.id == game['id']:
+        # Check for updates to existing game
+        updates, existing_dict = {}, vars(existing)
+        for key, value in game.items():
+            if isinstance(value, list):
+                # Check classifications
+                if key == 'mechanics':
+                    existing.mechanics = value
+                elif key == 'categories':
+                    existing.categories = value
+            elif value != existing_dict[key]:
+                # Check game object
+                updates[key] = value
+        if updates:
+            # Update existing game
+            stmt = update(Game).where(Game.id == game['id'])\
+                .values(**updates)\
+                .execution_options(synchronize_session="fetch")
+            session.execute(stmt)
 
 
-def ingest_game_mech_mapping(game: BeautifulSoup) -> list:
+
+def ingest_game_mechanics(session: Session, game: BeautifulSoup) -> list:
     '''Ingest mechanic mappings for individual game
 
     Args:
+        session (Session)
         game (BeautifulSoup): <item> node from xml file
 
     Returns:
-        List of GameMechanismMap objects
+        List of mechanic ids
     '''
-    game_id = game.attrs['id']
-    mechanics_ids = [line.attrs['id'] for line
-                        in game.find_all('link', type='boardgamemechanic')]
-
-    return [GameMechanicMap(game_id=game_id, mechanic_id=mech_id)
-            for mech_id in mechanics_ids]
+    mechanics = []
+    for line in game.find_all('link', type='boardgamemechanic'):
+        mechanics.append(session.get(Mechanic, line.attrs['id']))
+    return mechanics
 
 
-def ingest_game_cat_mapping(game: BeautifulSoup) -> list:
+def ingest_game_categories(session: Session, game: BeautifulSoup) -> list:
     '''Ingest category mappings for individual game
 
     Args:
+        session (Session)
         game (BeautifulSoup): <item> node from xml file
 
     Returns:
-        List of GameCategoryMap objects
+        List of category ids
     '''
-    game_id = game.attrs['id']
-    category_ids = [line.attrs['id'] for line
-                        in game.find_all('link', type='boardgamecategory')]
+    categories = []
+    for line in game.find_all('link', type='boardgamecategory'):
+        categories.append(session.get(Category, line.attrs['id']))
+    return categories
 
-    return [GameCategoryMap(game_id=game_id, category_id=cat_id)
-                  for cat_id in category_ids]
-
-
-def upsert_game(session: Session, game: Game):
-    '''Insert or update Game object to database'''
-     # Check if game exists, insert on absense
-    existing = session.query(Game).filter_by(id=game.id).scalar()
-    if not existing:
-        session.add(game)
-    elif existing.id == game.id:
-        pass # <IMPLEMENT UPDATE>
-
-
-def insert_mech_map(session: Session, mech_map: GameMechanicMap):
-    '''Insert GameMechanicMap to database if not already existing'''
-    mech_map_exists = session.query(GameMechanicMap)\
-        .filter_by(game_id=mech_map.game_id,
-                    mechanic_id=mech_map.mechanic_id)
-    if not mech_map_exists.first():
-        session.add(mech_map)
-
-def insert_cat_map(session: Session, cat_map: GameCategoryMap):
-    '''Insert GameCategoryMap to database if not already existing'''
-    cat_map_exists = session.query(GameCategoryMap)\
-                        .filter_by(game_id=cat_map.game_id,
-                                   category_id=cat_map.category_id)
-    if not cat_map_exists.first():
-        session.add(cat_map)
 
 def run(config):
-    '''Run ingestion script'''
+    '''Run ingestion script
+
+    Args:
+        config (Config): initialized loaders.config.Config object
+    '''
     with connect_to_db(config.DB_URL) as session:
         # Run process for each batch
         total_batches = int(config.NUM_OF_PAGES * 100 / config.BATCH_SIZE)
@@ -110,15 +115,7 @@ def run(config):
 
             # Iterate through games to extract data and add to database
             for game in batch_list:
-                # Game data
-                upsert_game(session, ingest_game(game))
-                # GameMechanicMaps
-                mech_maps = ingest_game_mech_mapping(game)
-                for mech_map in mech_maps:
-                    insert_mech_map(session, mech_map)
-                # GameCategoryMaps
-                cat_maps = ingest_game_cat_mapping(game)
-                for cat_map in cat_maps:
-                    insert_cat_map(session, cat_map)
+                # Insert/Update data to database
+                ingest_game(session, game)
                 session.commit()
             print('Done')    
