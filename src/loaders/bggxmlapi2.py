@@ -20,7 +20,7 @@ def build_query(query_type: str, params: dict) -> str:
     return url.strip('&')
 
 
-def fetch_game(game_id: int) -> requests:
+def fetch_game(game_id: int) -> requests.Response:
     '''Fetch game data from BGG
 
     Args:
@@ -37,7 +37,7 @@ def fetch_game(game_id: int) -> requests:
     return requests.get(url=request_url)
 
 
-def fetch_search_results(query: str) -> requests:
+def fetch_search_results(query: str) -> requests.Response:
     '''Fetch board game search results for given query
 
     Args:
@@ -51,7 +51,7 @@ def fetch_search_results(query: str) -> requests:
     return requests.get(url)
 
 
-def fetch_hotness() -> BeautifulSoup:
+def fetch_hotness() -> requests.Response:
     '''Fetch list of Hottest 50 Games on BGG
 
     Returns:
