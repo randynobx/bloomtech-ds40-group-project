@@ -31,6 +31,6 @@ class Config:
         if dialect == 'sqlite':
             self.DB_NAME = database
             self.DB_PATH = self.FINAL_PATH
-            self.DB_URL = f'{dialect}+{driver}:///{self.DB_PATH}/{self.DB_NAME}'
+            self.DB_URL = f'sqlite+pysqlite:///{self.DB_PATH}/{self.DB_NAME}'
         else:
             self.DB_URL = f'{dialect}+{driver}://{username}:{password}@{host}:{port}/{database}'

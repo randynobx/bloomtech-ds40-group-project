@@ -57,6 +57,10 @@ class Game(Base):
                                 backref='games')
 
 
+    def __repr__(self) -> str:
+        return f'<ID: {self.id}, Title: {self.title}>'
+
+
 class Mechanic(Base):
     '''Types of mechanics'''
     __tablename__ = 'mechanic'
@@ -65,7 +69,7 @@ class Mechanic(Base):
     name = Column('Name', String, unique=True, nullable=False)
 
     def __repr__(self) -> str:
-        return f'<ID: {self.id}, Name: {self.name}'
+        return f'<ID: {self.id}, Name: {self.name}>'
 
 
 class Category(Base):
@@ -76,7 +80,7 @@ class Category(Base):
     name = Column('Name', String, unique=True, nullable=False)
 
     def __repr__(self) -> str:
-        return f'<ID: {self.id}, Name: {self.name}'
+        return f'<ID: {self.id}, Name: {self.name}>'
 
 
 def init(config):
@@ -95,3 +99,11 @@ def init(config):
 
     Base.metadata.create_all(engine)
     print('Done')
+
+
+# Dictionary of classification types and their models
+# (<Name>, <Name in Game class>, <Class name>)
+CLASS_LIST = [
+    ('mechanic', 'mechanics', Mechanic),
+    ('category', 'categories', Category)
+]
