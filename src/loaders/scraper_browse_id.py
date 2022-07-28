@@ -20,7 +20,7 @@ def extract_ids(res: Response) -> list:
     # Change to set to remove duplicates
     return list(set(re.findall(search_pattern, str(res.content))))
 
-def run(config):
+def run(config) -> None:
     '''Run scraper'''
     print(f'Fetching first {config.NUM_OF_PAGES} pages ({config.NUM_OF_PAGES * 100} total games)')
 

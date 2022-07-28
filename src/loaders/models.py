@@ -83,7 +83,7 @@ class Category(Base):
         return f'<ID: {self.id}, Name: {self.name}>'
 
 
-def init(config):
+def init(config) -> None:
     '''Create database tables
 
     Args:
@@ -96,8 +96,9 @@ def init(config):
         os.mkdir(config.DB_PATH)
 
     engine = get_engine(config.DB_URL)
-
+    
     Base.metadata.create_all(engine)
+        
     print('Done')
 
 

@@ -14,7 +14,7 @@ def transform_game_data(game_soup: BeautifulSoup) -> dict:
         game_soup (BeautifulSoup): XML <item> node for game
 
     Returns:
-        (dict)
+        Game data in dictionary form
     '''
     return {
         'id': int(game_soup.find('item').attrs['id']),
@@ -39,6 +39,9 @@ def transform_game_class_ids(name: str, game_soup: BeautifulSoup) -> list:
     Args:
         name (str): Name of classification ['mechanic', 'category', ...]
         game_soup (BeautifulSoup): XML <item> node for game
+
+    Returns:
+        List of numeric ID's for given classification name
     '''
     return [int(line.attrs['id'])
             for line in game_soup.find_all('link', type=f'boardgame{name}')]
@@ -53,7 +56,7 @@ def load_game_classifications(session: Session, class_obj, id_list: list) -> lis
                     ['mechanic', 'category', ...]
 
     Returns:
-        (list): List of (class_obj type) objects
+        List of (class_obj type) objects
     '''
     return [session.get(class_obj, id) for id in id_list]
 
@@ -113,7 +116,7 @@ def process_game(session: Session, game_soup: BeautifulSoup, class_list: list) -
     load_game(session, game_dict)
 
 
-def run(config):
+def run(config) -> None:
     '''Run ingestion script
 
     Args:

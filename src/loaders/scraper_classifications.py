@@ -15,7 +15,7 @@ def extract_data(res: str, label: str) -> DataFrame:
         label (str): what to label data ['category', 'mechanics']
     
     Returns:
-        DataFrame
+        ID's and Names of classifications as DataFrame
     '''
     
     search_pattern = r'/boardgame{label}/(\d+)/([a-zA-Z-]+)'.format(label=label)
