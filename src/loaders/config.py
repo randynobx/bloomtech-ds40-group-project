@@ -29,8 +29,8 @@ class Config:
         port = config['PORT']
         database = config['DB']
         if dialect == 'sqlite':
-            self.DB_URL = f'{dialect}+{driver}:///{database}'
             self.DB_NAME = database
             self.DB_PATH = self.FINAL_PATH
+            self.DB_URL = f'{dialect}+{driver}:///{self.DB_PATH}/{self.DB_NAME}'
         else:
             self.DB_URL = f'{dialect}+{driver}://{username}:{password}@{host}:{port}/{database}'

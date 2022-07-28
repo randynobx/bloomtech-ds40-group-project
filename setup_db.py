@@ -1,5 +1,5 @@
 """Create and load boardgame database"""
-from src.loaders import scraper_browse_id, scraper_classifications, create_db,\
+from src.loaders import scraper_browse_id, scraper_classifications, models,\
                         scraper_games, ingest_classifications, ingest_games
 from src.loaders.config import Config
 
@@ -15,7 +15,7 @@ print('Scraping Done')
 
 # Create database
 print('Initializing Database...', end='')
-create_db.run(config)
+models.init(config)
 print('Done')
 
 # Run ingestion modules
