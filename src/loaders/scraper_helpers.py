@@ -24,5 +24,6 @@ def fetch_page(url: str) -> requests.Response:
         url (str): url of webpage to fetch
 
     Returns:
-        (Response)'''
+        requests.Reponse object of requested web page.
+    '''
     return requests.get(url)
