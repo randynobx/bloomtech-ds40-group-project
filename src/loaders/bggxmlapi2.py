@@ -1,7 +1,6 @@
 '''Helper functions for using the BoardGameGeek XMLAPI2'''
 
 import requests
-from bs4 import BeautifulSoup
 
 
 def build_query(query_type: str, params: dict) -> str:
@@ -12,7 +11,7 @@ def build_query(query_type: str, params: dict) -> str:
         params (dict): dict of params using str for both keys and values
 
     Returns:
-        str: query url
+        Query URL for given parameters
     '''
     url = f'https://boardgamegeek.com/xmlapi2/{query_type}?'
     for key, value in params.items():
@@ -20,14 +19,14 @@ def build_query(query_type: str, params: dict) -> str:
     return url.strip('&')
 
 
-def fetch_game(game_id: int) -> requests:
+def fetch_game(game_id: int) -> requests.Response:
     '''Fetch game data from BGG
 
     Args:
         game_id (int): numerical id of game on BGG
 
     Returns:
-        (requests)
+        Game data encoded with XML
     '''
     params = {
         'stats': '1',
@@ -37,25 +36,25 @@ def fetch_game(game_id: int) -> requests:
     return requests.get(url=request_url)
 
 
-def fetch_search_results(query: str) -> requests:
+def fetch_search_results(query: str) -> requests.Response:
     '''Fetch board game search results for given query
 
     Args:
         query (str): search query
 
     Returns:
-        (requests)
+        Search results encoded with XML
     '''
     query = query.replace(' ', '+')
     url = f'https://boardgamegeek.com/xmlapi2/search?query={query}&type=boardgame'
     return requests.get(url)
 
 
-def fetch_hotness() -> BeautifulSoup:
+def fetch_hotness() -> requests.Response:
     '''Fetch list of Hottest 50 Games on BGG
 
     Returns:
-        (BeautifulSoup)
+        XML list of 'Hottest 50 Games on BGG'
     '''
     hot_list_url = 'https://boardgamegeek.com/xmlapi2/hot?boardgames'
     return requests.get(hot_list_url)

@@ -14,6 +14,9 @@ def scrape_game_pages(game_ids_list: list, batch_size: int) -> Response:
     Args:
         game_ids_list (list): list of game ids to scrape
         batch_size (int): number of ids to bundle into each request
+
+    Returns:
+        Yields batches of games as Reponse objects
     '''
     total_batches = ceil(len(game_ids_list) // batch_size) + 1
     for batch_num in range(total_batches):

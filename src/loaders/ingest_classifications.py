@@ -3,7 +3,7 @@
 from pandas import read_csv
 from .database_helpers import get_engine
 
-def run(config):
+def run(config) -> None:
     '''Run ingestion script'''
     # Create database engine
     engine = get_engine(config.DB_URL)
