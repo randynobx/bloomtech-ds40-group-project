@@ -3,8 +3,8 @@
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 from bs4 import BeautifulSoup
-from loaders.database_helpers import connect_to_db
-from loaders.models import Game, CLASS_LIST
+from .database_helpers import connect_to_db
+from .models import Game, CLASS_LIST
 
 
 def transform_game_data(game_soup: BeautifulSoup) -> dict:
