@@ -96,9 +96,9 @@ def init(config) -> None:
         os.mkdir(config.DB_PATH)
 
     engine = get_engine(config.DB_URL)
-    
+
     Base.metadata.create_all(engine)
-        
+
     print('Done')
 
 
