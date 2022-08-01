@@ -36,7 +36,7 @@ def fetch_game(game_id: int) -> requests.Response:
     return requests.get(url=request_url)
 
 
-def fetch_search_results(query: str) -> requests.Reponse:
+def fetch_search_results(query: str) -> requests.Response:
     '''Fetch board game search results for given query
 
     Args:
